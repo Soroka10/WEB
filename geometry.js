@@ -116,15 +116,18 @@ function triangle(arg1, type1, arg2, type2) {
 		return STATUS.FAILED
 	}
 
-	if ((values.a || values.b) && (values.a > values.c || values.b > values.c) && values.c) {
+	if ((values.a || values.b) && (values.a >= values.c || values.b >= values.c) && values.c) {
 		console.log(`Leg can't be greater than hypotenuse`)
 		return STATUS.FAILED
 	}
 
+	values.alpha = values.alpha * (Math.PI / 180)
+	values.beta = values.beta * (Math.PI / 180)
+
 	if (values.a && values.b) {
 		values.c = Math.sqrt(Math.pow(values.a, 2) + Math.pow(values.b, 2))
 		values.alpha = Math.asin(values.a / values.c)
-		values.beta = 180 - 90 - values.alpha
+		values.beta = Math.PI / 2 - values.alpha
 
 	} else if (values.a && values.c) {
 		values.alpha = Math.asin(values.a / values.c)
@@ -134,12 +137,12 @@ function triangle(arg1, type1, arg2, type2) {
 	} else if (values.a && values.alpha) {
 		values.c = values.a / Math.cos(values.alpha)
 		values.b = values.a * Math.tan(values.alpha)
-		values.beta = 180 - 90 - values.alpha
+		values.beta = Math.PI / 2 - values.alpha
 
 	} else if (values.a && values.beta) {
 		values.b = values.a * Math.tan(values.beta)
 		values.c = values.a / Math.cos(values.beta)
-		values.alpha = 180 - 90 - values.beta
+		values.alpha = Math.PI / 2 - values.beta
 
 	} else if (values.alpha && values.beta) {
 		values.a = Math.tan(values.alpha)
@@ -149,15 +152,15 @@ function triangle(arg1, type1, arg2, type2) {
 	} else if (values.c && values.alpha) {
 		values.a = values.c * Math.cos(values.alpha)
 		values.b = values.c
-		values.beta = 180 - 90 - values.alpha
+		values.beta = Math.PI / 2 - values.alpha
 	}
 
 	console.log('Triangle sides:');
 	console.log(`a: ${values.a}`);
 	console.log(`b: ${values.b}`);
 	console.log(`c: ${values.c}`);
-	console.log(`alpha: ${values.alpha}`);
-	console.log(`beta:  ${values.beta}`);
+	console.log(`alpha: ${values.alpha * (180 / Math.PI)}`);
+	console.log(`beta:  ${values.beta * (180 / Math.PI)}`);
 
 	return STATUS.SUCCESS;
 }

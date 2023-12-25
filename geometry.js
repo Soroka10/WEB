@@ -104,20 +104,35 @@ function triangle(arg1, type1, arg2, type2) {
 		beta: 0
 	}
 	const values = bindValues(defaultValues, arg1, type1, arg2, type2)
+	
 	console.log(values)
 
-	if (JSON.stringify(defaultValues) === JSON.stringify(values)) {
-		console.log(`Unacceptable type pair - '${type1}' and '${type2}'`)
-		return STATUS.FAILED
+	const validators = [
+		[
+			() => JSON.stringify(defaultValues) === JSON.stringify(values),
+		 	`Unacceptable type pair - '${type1}' and '${type2}'`
+	 	],
+	 	[
+	 		() => values.alpha + values.beta > 90 || values.alpha >= 90 || values.beta >= 90,
+	 		`Sharp angles can't be greater or equal 90 degrees`
+	 	],
+	 	[
+	 		() => (values.a || values.b) && (values.a >= values.c || values.b >= values.c) && values.c,
+	 		`Leg can't be greater than hypotenuse`
+	 	]
+	]
+
+	const runValidators = () => {
+		for (let [validator, errorMessage] of validators) {
+			if (validator()) {
+				console.log(errorMessage)
+				return false
+			}
+		}
+		return true
 	}
 
-	if (values.alpha + values.beta >= 90) {
-		console.log(`Sharp angles can't be greater or equal 90 degrees`)
-		return STATUS.FAILED
-	}
-
-	if ((values.a || values.b) && (values.a >= values.c || values.b >= values.c) && values.c) {
-		console.log(`Leg can't be greater than hypotenuse`)
+	if (!runValidators()) {
 		return STATUS.FAILED
 	}
 
@@ -155,13 +170,21 @@ function triangle(arg1, type1, arg2, type2) {
 		values.beta = Math.PI / 2 - values.alpha
 	}
 
+	values.alpha = values.alpha * (180 / Math.PI)
+	values.beta = values.beta * (180 / Math.PI)
+
+	if (!runValidators()) {
+		return STATUS.FAILED
+	}
+
 	console.log('Triangle sides:');
 	console.log(`a: ${values.a}`);
 	console.log(`b: ${values.b}`);
 	console.log(`c: ${values.c}`);
-	console.log(`alpha: ${values.alpha * (180 / Math.PI)}`);
-	console.log(`beta:  ${values.beta * (180 / Math.PI)}`);
+	console.log(`alpha: ${values.alpha}`);
+	console.log(`beta:  ${values.beta}`);
 
 	return STATUS.SUCCESS;
 }
+
 console.log('Script loaded')
